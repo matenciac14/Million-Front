@@ -18,11 +18,32 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   isOpen,
   onClose
 }) => {
+  const [imageError, setImageError] = React.useState(false);
+  const [imageLoading, setImageLoading] = React.useState(true);
+
+  // Reset image state when property changes
+  React.useEffect(() => {
+    if (property) {
+      setImageError(false);
+      setImageLoading(true);
+    }
+  }, [property?.id]);
+
   if (!isOpen || !property) return null;
 
-  const imageUrl = (property.image && isValidImageUrl(property.image)) 
+  const imageUrl = (property.image && isValidImageUrl(property.image) && !imageError) 
     ? property.image 
     : '/placeholder-property.svg';
+
+  const handleImageError = () => {
+    console.log('Modal image failed to load:', property.image);
+    setImageError(true);
+    setImageLoading(false);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -56,16 +77,19 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
             {/* Content */}
             <div className="p-6">
               {/* Image */}
-              <div className="relative h-64 md:h-80 w-full mb-6 rounded-lg overflow-hidden">
+              <div className="relative h-64 md:h-80 w-full mb-6 rounded-lg overflow-hidden bg-gray-200">
+                {imageLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                )}
                 <Image
                   src={imageUrl}
                   alt={property.name}
                   fill
                   className="object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/placeholder-property.svg';
-                  }}
+                  onError={handleImageError}
+                  onLoad={handleImageLoad}
                 />
               </div>
 

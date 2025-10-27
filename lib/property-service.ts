@@ -71,9 +71,15 @@ export class PropertyService {
 
       const data = await handleApiResponse<PaginatedResponse<Property> | Property[]>(response);
       
+      console.log('API Response received:', data);
+      
       // Manejar diferentes formatos de respuesta del backend
       if (Array.isArray(data)) {
         // Si la respuesta es directamente un array de propiedades (sin filtros)
+        console.log('Processing array response with', data.length, 'properties');
+        data.forEach((prop, index) => {
+          console.log(`Property ${index + 1} image:`, prop.image);
+        });
         return {
           properties: data as Property[],
           totalCount: data.length,
@@ -85,9 +91,11 @@ export class PropertyService {
         };
       } else if (data && 'properties' in data) {
         // Si la respuesta viene con paginación
+        console.log('Processing paginated response:', data);
         return data as PaginatedResponse<Property>;
       } else {
         // Respuesta vacía o formato no reconocido
+        console.log('Empty or unrecognized response format');
         return {
           properties: [],
           totalCount: 0,

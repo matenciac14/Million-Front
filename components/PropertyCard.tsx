@@ -13,22 +13,46 @@ interface PropertyCardProps {
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) => {
-  const imageUrl = (property.image && isValidImageUrl(property.image)) 
+  const [imageError, setImageError] = React.useState(false);
+  const [imageLoading, setImageLoading] = React.useState(true);
+  
+  console.log('PropertyCard rendering for:', property.name);
+  console.log('Property image URL:', property.image);
+  console.log('isValidImageUrl result:', property.image ? isValidImageUrl(property.image) : 'No image URL');
+  
+  const imageUrl = (property.image && isValidImageUrl(property.image) && !imageError) 
     ? property.image 
     : '/placeholder-property.svg';
+    
+  console.log('Final imageUrl for', property.name, ':', imageUrl);
+
+  const handleImageError = () => {
+    console.log('Image failed to load:', property.image);
+    setImageError(true);
+    setImageLoading(false);
+  };
+
+  const handleImageLoad = () => {
+    console.log('Image loaded successfully:', property.image);
+    setImageLoading(false);
+  };
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <div className="relative h-48 w-full">
+      <div className="relative h-48 w-full bg-gray-200">
+        {imageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        )}
         <Image
           src={imageUrl}
           alt={property.name}
           fill
           className="object-cover"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = '/placeholder-property.svg';
-          }}
+          onError={handleImageError}
+          onLoad={handleImageLoad}
+          priority={false}
         />
         <div className="absolute top-2 right-2">
           <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">
