@@ -1,22 +1,69 @@
-// Tipos TypeScript para el proyecto inmobiliario
+// Tipos TypeScript para el proyecto inmobiliario (según schema de DB)
 
-// Interfaz principal para las propiedades (según el schema de MongoDB del backend .NET)
+// Entidad PropertyImage (tabla separada para imágenes)
+export interface PropertyImage {
+  idPropertyImage: string;
+  idProperty: string;
+  file: string;
+  enabled: boolean;
+  isMain?: boolean; // Para identificar imagen principal
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Entidad PropertyTrace (trazabilidad/historial de ventas)
+export interface PropertyTrace {
+  idPropertyTrace: string;
+  idProperty: string;
+  dateSale: string;
+  name: string;
+  value: number;
+  tax: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Entidad Owner según schema de DB
+export interface Owner {
+  idOwner: string;
+  name: string;
+  address: string;
+  photo?: string;
+  birthday?: string;
+  // Campos adicionales del backend si existen
+  lastName?: string;
+  fullName?: string;
+  phone?: string;
+  email?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Interfaz principal para las propiedades (según schema real de DB)
 export interface Property {
-  id: string;
+  idProperty: string;
   name: string;
   address: string;
   price: number;
-  idOwner: string;
-  codigoInternal: string;
+  codeInternal: string;
   year?: number;
-  createdAt: string;
+  idOwner: string;
+  createdAt?: string;
   updatedAt?: string;
-  image?: string | null; // Viene de PropertyImage collection
-  ownerName?: string; // Viene populado del Owner
-  ownerPhone?: string; // Viene populado del Owner
-  city?: string; // Viene de PropertyPlace collection
-  state?: string; // Viene de PropertyPlace collection
-  country?: string; // Viene de PropertyPlace collection
+  
+  // Relaciones pobladas desde otras tablas
+  images?: PropertyImage[];
+  traces?: PropertyTrace[];
+  owner?: Owner;
+  
+  // Campos calculados para compatibilidad con el frontend existente
+  id?: string; // Alias para idProperty
+  ownerName?: string;
+  ownerPhone?: string;
+  city?: string;
+  state?: string;
+  country?: string;
 }
 
 // DTO para crear/actualizar propiedades (según backend)
@@ -25,12 +72,8 @@ export interface PropertyCreateDto {
   address: string;
   price: number;
   idOwner: string;
-  codigoInternal: string;
+  codeInternal: string;
   year?: number;
-  image?: string;
-  city?: string;
-  state?: string;
-  country?: string;
 }
 
 // DTO para actualizar propiedades
@@ -39,28 +82,31 @@ export interface PropertyUpdateDto {
   address?: string;
   price?: number;
   year?: number;
-  image?: string;
-  city?: string;
-  state?: string;
-  country?: string;
 }
 
 // DTO para crear propietarios
 export interface OwnerCreateDto {
   name: string;
-  lastName: string;
-  phone: string;
-  email: string;
+  address: string;
+  photo?: string;
   birthday?: string;
 }
 
 // DTO para actualizar propietarios
 export interface OwnerUpdateDto {
   name?: string;
-  lastName?: string;
-  phone?: string;
-  email?: string;
+  address?: string;
+  photo?: string;
   birthday?: string;
+}
+
+// DTO para crear PropertyImage
+export interface PropertyImageCreateDto {
+  idProperty: string;
+  file: string;
+  enabled: boolean;
+  isMain?: boolean;
+  description?: string;
 }
 
 // Filtros para buscar propiedades (según documentación del backend)
@@ -115,19 +161,6 @@ export interface ApiResponse<T> {
 export interface LoadingState {
   isLoading: boolean;
   error: string | null;
-}
-
-// Información del propietario (según el schema de MongoDB)
-export interface Owner {
-  id: string;
-  name: string;
-  lastName: string;
-  fullName?: string; // Calculado en el backend
-  phone: string;
-  email: string;
-  birthday?: string;
-  createdAt: string;
-  updatedAt?: string;
 }
 
 // Rango de precios para filtros

@@ -286,47 +286,201 @@ export class PropertyService {
   private static getMockProperties(): Property[] {
     return [
       {
-        id: '1',
-        idOwner: 'owner-001',
+        idProperty: '1',
         name: 'Casa Moderna en Zona Norte',
         address: 'Calle 123 #45-67, Bogotá',
         price: 450000000,
-        codigoInternal: 'PROP001',
+        codeInternal: 'PROP001',
         year: 2020,
+        idOwner: 'owner-001',
         createdAt: new Date().toISOString(),
-        image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500',
-        ownerName: 'Juan Carlos Pérez',
+        // Múltiples imágenes como en la estructura real
+        images: [
+          {
+            idPropertyImage: 'img1',
+            idProperty: '1',
+            file: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500',
+            enabled: true,
+            isMain: true,
+            description: 'Vista frontal de la casa',
+            createdAt: new Date().toISOString()
+          },
+          {
+            idPropertyImage: 'img2',
+            idProperty: '1',
+            file: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500',
+            enabled: true,
+            isMain: false,
+            description: 'Vista del jardín',
+            createdAt: new Date().toISOString()
+          },
+          {
+            idPropertyImage: 'img3',
+            idProperty: '1',
+            file: 'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=500',
+            enabled: true,
+            isMain: false,
+            description: 'Interior sala principal',
+            createdAt: new Date().toISOString()
+          }
+        ],
+        // Información del propietario
+        owner: {
+          idOwner: 'owner-001',
+          name: 'Juan Carlos',
+          address: 'Calle 456 #78-90, Bogotá',
+          phone: '+57 300 123 4567',
+          email: 'juan.carlos@email.com'
+        },
+        // Historial de transacciones
+        traces: [
+          {
+            idPropertyTrace: 'trace1',
+            idProperty: '1',
+            dateSale: '2020-05-15',
+            name: 'Compra inicial',
+            value: 420000000,
+            tax: 42000000,
+            createdAt: new Date().toISOString()
+          }
+        ],
+        // Campos calculados para compatibilidad
+        id: '1',
+        ownerName: 'Juan Carlos',
         ownerPhone: '+57 300 123 4567',
         city: 'Bogotá',
         state: 'Cundinamarca',
         country: 'Colombia'
       },
       {
-        id: '2',
-        idOwner: 'owner-002',
+        idProperty: '2',
         name: 'Apartamento Ejecutivo Centro',
         address: 'Carrera 7 #15-20, Bogotá',
         price: 280000000,
-        codigoInternal: 'PROP002',
+        codeInternal: 'PROP002',
         year: 2018,
+        idOwner: 'owner-002',
         createdAt: new Date().toISOString(),
-        image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500',
-        ownerName: 'María García López',
+        images: [
+          {
+            idPropertyImage: 'img4',
+            idProperty: '2',
+            file: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500',
+            enabled: true,
+            isMain: true,
+            description: 'Vista del apartamento',
+            createdAt: new Date().toISOString()
+          },
+          {
+            idPropertyImage: 'img5',
+            idProperty: '2',
+            file: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500',
+            enabled: true,
+            isMain: false,
+            description: 'Cocina moderna',
+            createdAt: new Date().toISOString()
+          }
+        ],
+        owner: {
+          idOwner: 'owner-002',
+          name: 'María García',
+          address: 'Carrera 15 #80-25, Bogotá',
+          phone: '+57 311 234 5678',
+          email: 'maria.garcia@email.com'
+        },
+        traces: [
+          {
+            idPropertyTrace: 'trace2',
+            idProperty: '2',
+            dateSale: '2018-03-20',
+            name: 'Compra inicial',
+            value: 250000000,
+            tax: 25000000,
+            createdAt: new Date().toISOString()
+          },
+          {
+            idPropertyTrace: 'trace3',
+            idProperty: '2',
+            dateSale: '2024-01-10',
+            name: 'Revalorización',
+            value: 280000000,
+            tax: 0,
+            createdAt: new Date().toISOString()
+          }
+        ],
+        id: '2',
+        ownerName: 'María García',
         ownerPhone: '+57 311 234 5678',
         city: 'Bogotá',
         state: 'Cundinamarca',
         country: 'Colombia'
       },
       {
-        id: '3',
-        idOwner: 'owner-003',
+        idProperty: '3',
         name: 'Penthouse con Vista',
         address: 'Avenida 19 #100-50, Bogotá',
         price: 750000000,
-        codigoInternal: 'PROP003',
+        codeInternal: 'PROP003',
         year: 2022,
+        idOwner: 'owner-003',
         createdAt: new Date().toISOString(),
-        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500',
+        images: [
+          {
+            idPropertyImage: 'img6',
+            idProperty: '3',
+            file: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500',
+            enabled: true,
+            isMain: true,
+            description: 'Vista panorámica',
+            createdAt: new Date().toISOString()
+          },
+          {
+            idPropertyImage: 'img7',
+            idProperty: '3',
+            file: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500',
+            enabled: true,
+            isMain: false,
+            description: 'Terraza con vista',
+            createdAt: new Date().toISOString()
+          },
+          {
+            idPropertyImage: 'img8',
+            idProperty: '3',
+            file: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500',
+            enabled: true,
+            isMain: false,
+            description: 'Sala de estar',
+            createdAt: new Date().toISOString()
+          },
+          {
+            idPropertyImage: 'img9',
+            idProperty: '3',
+            file: 'https://images.unsplash.com/photo-1560185007-5f0bb1866cab?w=500',
+            enabled: true,
+            isMain: false,
+            description: 'Dormitorio principal',
+            createdAt: new Date().toISOString()
+          }
+        ],
+        owner: {
+          idOwner: 'owner-003',
+          name: 'Carlos Rodríguez',
+          address: 'Avenida 19 #95-30, Bogotá',
+          phone: '+57 320 345 6789',
+          email: 'carlos.rodriguez@email.com'
+        },
+        traces: [
+          {
+            idPropertyTrace: 'trace4',
+            idProperty: '3',
+            dateSale: '2022-08-15',
+            name: 'Compra inicial',
+            value: 720000000,
+            tax: 72000000,
+            createdAt: new Date().toISOString()
+          }
+        ],
+        id: '3',
         ownerName: 'Carlos Rodríguez',
         ownerPhone: '+57 320 345 6789',
         city: 'Bogotá',
@@ -340,7 +494,9 @@ export class PropertyService {
    * Type guards para verificar tipos
    */
   private static isProperty(obj: unknown): obj is Property {
-    return typeof obj === 'object' && obj !== null && 'id' in obj && 'name' in obj && 'address' in obj && 'price' in obj;
+    return typeof obj === 'object' && obj !== null && 
+           ('idProperty' in obj || 'id' in obj) && 
+           'name' in obj && 'address' in obj && 'price' in obj;
   }
 
   private static isApiResponse(obj: unknown): obj is ApiResponse<unknown> {
