@@ -1,18 +1,28 @@
 'use client';
 
 import { useState, useEffect, useCallback } from "react";
-import { Property, PropertyFilters, LoadingState } from "@/types";
+import { Property, PropertyFilters, LoadingState, PaginatedResponse } from "@/types";
 import { PropertyService } from "@/lib/property-service";
 import { 
   PropertyList, 
   PropertyFiltersComponent, 
-  PropertyDetailModal 
+  PropertyDetailModal,
+  ApiDiagnostic
 } from "@/components";
 
 export default function Home() {
   const [properties, setProperties] = useState<Property[]>([]);
+  const [paginationInfo, setPaginationInfo] = useState({
+    totalCount: 0,
+    page: 1,
+    pageSize: 10,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false
+  });
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
   const [loadingState, setLoadingState] = useState<LoadingState>({
     isLoading: false,
     error: null
@@ -24,29 +34,35 @@ export default function Home() {
     
     try {
       const response = await PropertyService.getProperties(filters);
-      if (response.success) {
-        setProperties(response.data);
-      } else {
-        setLoadingState({ 
-          isLoading: false, 
-          error: response.message || 'Error al cargar propiedades' 
-        });
-      }
+      
+      // Actualizar properties y paginación
+      setProperties(response.properties || []);
+      setPaginationInfo({
+        totalCount: response.totalCount,
+        page: response.page,
+        pageSize: response.pageSize,
+        totalPages: response.totalPages,
+        hasNextPage: response.hasNextPage,
+        hasPreviousPage: response.hasPreviousPage
+      });
+      
+      setLoadingState({ isLoading: false, error: null });
     } catch (error) {
       console.error('Error loading properties:', error);
       setLoadingState({ 
         isLoading: false, 
         error: error instanceof Error ? error.message : 'Error desconocido' 
       });
-    } finally {
-      setLoadingState(prev => ({ ...prev, isLoading: false }));
     }
   }, []);
 
   // Cargar propiedades al montar el componente
   useEffect(() => {
-    loadProperties();
-  }, [loadProperties]);
+    const initializeProperties = async () => {
+      await loadProperties();
+    };
+    initializeProperties();
+  }, []);
 
   // Manejar cambios en filtros
   const handleFiltersChange = useCallback((filters: PropertyFilters) => {
@@ -100,31 +116,57 @@ export default function Home() {
                 Propiedades Disponibles
               </h2>
               {!loadingState.isLoading && !loadingState.error && (
-                <span className="text-sm text-gray-500">
-                  {properties.length} {properties.length === 1 ? 'propiedad encontrada' : 'propiedades encontradas'}
-                </span>
+                <div className="text-sm text-gray-500">
+                  <span>
+                    {paginationInfo.totalCount} {paginationInfo.totalCount === 1 ? 'propiedad encontrada' : 'propiedades encontradas'}
+                  </span>
+                  {paginationInfo.totalPages > 1 && (
+                    <span className="ml-2">
+                      (Página {paginationInfo.page} de {paginationInfo.totalPages})
+                    </span>
+                  )}
+                </div>
               )}
             </div>
 
             {/* Error State */}
             {loadingState.error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
-                <div className="flex">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-red-800">
-                      Error al cargar propiedades
-                    </h3>
-                    <p className="mt-1 text-sm text-red-700">
-                      {loadingState.error}
-                    </p>
-                    <p className="mt-2 text-sm text-red-600">
-                      Asegúrate de que el servidor backend esté ejecutándose en http://localhost:5179
-                    </p>
+              <div className="space-y-4">
+                <div className="bg-red-50 border border-red-200 rounded-md p-4">
+                  <div className="flex">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <div className="ml-3 flex-1">
+                      <h3 className="text-sm font-medium text-red-800">
+                        Error al cargar propiedades
+                      </h3>
+                      <p className="mt-1 text-sm text-red-700">
+                        {loadingState.error}
+                      </p>
+                      <p className="mt-2 text-sm text-red-600">
+                        Asegúrate de que el servidor backend esté ejecutándose en http://localhost:5179
+                      </p>
+                      <div className="mt-3 flex space-x-2">
+                        <button
+                          onClick={() => loadProperties()}
+                          className="text-sm bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200"
+                        >
+                          Reintentar
+                        </button>
+                        <button
+                          onClick={() => setShowDiagnostic(!showDiagnostic)}
+                          className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded hover:bg-blue-200"
+                        >
+                          {showDiagnostic ? 'Ocultar' : 'Mostrar'} Diagnóstico
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                
+                {/* API Diagnostic Tool */}
+                {showDiagnostic && <ApiDiagnostic />}
               </div>
             )}
 

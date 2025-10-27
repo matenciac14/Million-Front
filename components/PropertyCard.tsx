@@ -13,9 +13,9 @@ interface PropertyCardProps {
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDetails }) => {
-  const imageUrl = isValidImageUrl(property.image) 
+  const imageUrl = (property.image && isValidImageUrl(property.image)) 
     ? property.image 
-    : '/placeholder-property.jpg';
+    : '/placeholder-property.svg';
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -27,7 +27,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDeta
           className="object-cover"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = '/placeholder-property.jpg';
+            target.src = '/placeholder-property.svg';
           }}
         />
         <div className="absolute top-2 right-2">
@@ -51,7 +51,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, onViewDeta
         </p>
 
         <div className="text-xs text-gray-500 mb-4">
-          ID Propietario: {property.idOwner}
+          <div>ID Propietario: {property.idOwner}</div>
+          <div>Propietario: {property.ownerName}</div>
+          <div>Año: {property.year}</div>
         </div>
 
         <Button 

@@ -20,9 +20,9 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 }) => {
   if (!isOpen || !property) return null;
 
-  const imageUrl = isValidImageUrl(property.image) 
+  const imageUrl = (property.image && isValidImageUrl(property.image)) 
     ? property.image 
-    : '/placeholder-property.jpg';
+    : '/placeholder-property.svg';
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -64,7 +64,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   className="object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = '/placeholder-property.jpg';
+                    target.src = '/placeholder-property.svg';
                   }}
                 />
               </div>

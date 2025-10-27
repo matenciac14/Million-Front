@@ -7,3 +7,4 @@ export { PropertyList } from './PropertyList';
 export { PropertyFiltersComponent } from './PropertyFilters';
 export { PropertyDetailModal } from './PropertyDetailModal';
 export { ErrorBoundary, useErrorHandler } from './ErrorBoundary';
+export { ApiDiagnostic } from './ApiDiagnostic';
