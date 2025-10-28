@@ -26,25 +26,28 @@ export const PropertyFiltersComponent: React.FC<
 > = ({ onFiltersChange, isLoading }) => {
   const [filters, setFilters] = useState<PropertyFilters>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
-  
+
   // Timeout ref para el debounce manual
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Función para manejar el debounce de filtros
-  const triggerFiltersChange = useCallback((newFilters: PropertyFilters) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    
-    timeoutRef.current = setTimeout(() => {
-      onFiltersChange(newFilters);
-    }, 500);
-  }, [onFiltersChange]);
+  const triggerFiltersChange = useCallback(
+    (newFilters: PropertyFilters) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        onFiltersChange(newFilters);
+      }, 500);
+    },
+    [onFiltersChange]
+  );
 
   // Effect para llamar la API cuando los filtros cambien
   useEffect(() => {
     triggerFiltersChange(filters);
-    
+
     // Cleanup
     return () => {
       if (timeoutRef.current) {
@@ -55,7 +58,7 @@ export const PropertyFiltersComponent: React.FC<
 
   // Función helper para actualizar filtros sin causar re-renders innecesarios
   const updateFilters = useCallback((updates: Partial<PropertyFilters>) => {
-    setFilters(prev => ({ ...prev, ...updates }));
+    setFilters((prev) => ({ ...prev, ...updates }));
   }, []);
 
   // Handlers para inputs de texto - ahora más simples
