@@ -1,13 +1,13 @@
 // Configuración de la API
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:5179',
+  BASE_URL: 'https://localhost:7007',
   ENDPOINTS: {
     // Property endpoints
     PROPERTIES: '/api/Property',
     PROPERTY_BY_ID: (id: string) => `/api/Property/${id}`,
     PROPERTIES_BY_OWNER: (ownerId: string) => `/api/Property/owner/${ownerId}`,
     PROPERTIES_BY_PRICE_RANGE: '/api/Property/price-range',
-    
+
     // Owner endpoints
     OWNERS: '/api/Owner',
     OWNER_BY_ID: (id: string) => `/api/Owner/${id}`,
@@ -22,11 +22,11 @@ export const API_CONFIG = {
 // Función helper para manejar respuestas de la API con mejor debugging
 export const handleApiResponse = async <T>(response: Response): Promise<T> => {
   console.log(`API Response - Status: ${response.status}, URL: ${response.url}`);
-  
+
   if (!response.ok) {
     let errorMessage = `Error ${response.status}: ${response.statusText}`;
     let errorDetails = null;
-    
+
     try {
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
@@ -41,11 +41,11 @@ export const handleApiResponse = async <T>(response: Response): Promise<T> => {
     } catch (parseError) {
       console.warn('Could not parse error response:', parseError);
     }
-    
+
     console.error('API Error Details:', { status: response.status, message: errorMessage, details: errorDetails });
     throw new Error(errorMessage);
   }
-  
+
   try {
     const data = await response.json();
     console.log('API Response Data:', data);
@@ -59,6 +59,7 @@ export const handleApiResponse = async <T>(response: Response): Promise<T> => {
 // Función para verificar conectividad con el backend
 export const checkApiHealth = async (): Promise<boolean> => {
   try {
+    // En desarrollo, simplemente probamos la conectividad básica
     const response = await fetch(`${API_CONFIG.BASE_URL}/health`, {
       method: 'GET',
       headers: API_CONFIG.HEADERS,

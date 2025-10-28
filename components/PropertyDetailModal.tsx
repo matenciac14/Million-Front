@@ -1,11 +1,18 @@
-'use client';
+/** @format */
 
-import React from 'react';
-import Image from 'next/image';
-import { Property } from '@/types';
-import { Card } from './Card';
-import { Button } from './Button';
-import { formatPrice, getPropertyImages, getMainImage, normalizeProperty } from '@/lib/utils';
+"use client";
+
+import React from "react";
+import Image from "next/image";
+import { Property } from "@/types";
+import { Card } from "./Card";
+import { Button } from "./Button";
+import {
+  formatPrice,
+  getPropertyImages,
+  getMainImage,
+  normalizeProperty,
+} from "@/lib/utils";
 
 interface PropertyDetailModalProps {
   property: Property | null;
@@ -16,7 +23,7 @@ interface PropertyDetailModalProps {
 export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   property,
   isOpen,
-  onClose
+  onClose,
 }) => {
   const [imageError, setImageError] = React.useState(false);
   const [imageLoading, setImageLoading] = React.useState(true);
@@ -35,17 +42,18 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
   // Normalizar propiedad para compatibilidad
   const normalizedProperty = normalizeProperty(property);
-  
+
   // Obtener todas las imágenes válidas
   const propertyImages = getPropertyImages(normalizedProperty);
-  
+
   // Imagen actual (si hay múltiples) o imagen principal
-  const currentImage = propertyImages.length > 0 
-    ? propertyImages[currentImageIndex]?.file 
-    : getMainImage(normalizedProperty);
+  const currentImage =
+    propertyImages.length > 0
+      ? propertyImages[currentImageIndex]?.file
+      : getMainImage(normalizedProperty);
 
   const handleImageError = () => {
-    console.log('Modal image failed to load:', currentImage);
+    console.log("Modal image failed to load:", currentImage);
     setImageError(true);
     setImageLoading(false);
   };
@@ -64,7 +72,9 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
   const prevImage = () => {
     if (propertyImages.length > 1) {
-      setCurrentImageIndex((prev) => (prev - 1 + propertyImages.length) % propertyImages.length);
+      setCurrentImageIndex(
+        (prev) => (prev - 1 + propertyImages.length) % propertyImages.length
+      );
       setImageLoading(true);
       setImageError(false);
     }
@@ -80,11 +90,11 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-screen items-center justify-center p-4">
         {/* Backdrop */}
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
           onClick={onClose}
         />
-        
+
         {/* Modal */}
         <div className="relative w-full max-w-2xl">
           <Card className="max-h-[90vh] overflow-y-auto">
@@ -99,8 +109,18 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 onClick={onClose}
                 className="p-2"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </Button>
             </div>
@@ -117,14 +137,14 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                     </div>
                   )}
                   <Image
-                    src={currentImage || '/placeholder-property.svg'}
+                    src={currentImage || "/placeholder-property.svg"}
                     alt={normalizedProperty.name}
                     fill
                     className="object-cover"
                     onError={handleImageError}
                     onLoad={handleImageLoad}
                   />
-                  
+
                   {/* Navigation Arrows (solo si hay múltiples imágenes) */}
                   {propertyImages.length > 1 && (
                     <>
@@ -133,21 +153,41 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                         className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
                         aria-label="Imagen anterior"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 19l-7-7 7-7"
+                          />
                         </svg>
                       </button>
-                      
+
                       <button
                         onClick={nextImage}
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-opacity"
                         aria-label="Imagen siguiente"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
                         </svg>
                       </button>
-                      
+
                       {/* Image counter */}
                       <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
                         {currentImageIndex + 1} / {propertyImages.length}
@@ -155,7 +195,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                     </>
                   )}
                 </div>
-                
+
                 {/* Thumbnail Gallery (solo si hay múltiples imágenes) */}
                 {propertyImages.length > 1 && (
                   <div className="flex mt-3 space-x-2 overflow-x-auto pb-2">
@@ -164,7 +204,9 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                         key={img.idPropertyImage}
                         onClick={() => selectImage(index)}
                         className={`shrink-0 relative w-16 h-16 rounded-md overflow-hidden border-2 transition-colors ${
-                          index === currentImageIndex ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
+                          index === currentImageIndex
+                            ? "border-blue-500"
+                            : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
                         <Image
@@ -203,26 +245,61 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
                 {/* Address */}
                 <div className="flex items-start space-x-2">
-                  <svg className="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    className="w-5 h-5 text-gray-400 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Dirección</p>
-                    <p className="text-gray-900">{normalizedProperty.address}</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Dirección
+                    </p>
+                    <p className="text-gray-900">
+                      {normalizedProperty.address}
+                    </p>
                   </div>
                 </div>
 
                 {/* Owner Information */}
                 <div className="flex items-start space-x-2">
-                  <svg className="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <svg
+                    className="w-5 h-5 text-gray-400 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Propietario</p>
-                    <p className="text-gray-900">{normalizedProperty.ownerName || 'No especificado'}</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Propietario
+                    </p>
+                    <p className="text-gray-900">
+                      {normalizedProperty.ownerName || "No especificado"}
+                    </p>
                     {normalizedProperty.ownerPhone && (
-                      <p className="text-gray-600 text-sm">{normalizedProperty.ownerPhone}</p>
+                      <p className="text-gray-600 text-sm">
+                        {normalizedProperty.ownerPhone}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -231,41 +308,63 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   {normalizedProperty.year && (
                     <div>
-                      <p className="text-sm font-medium text-gray-700">Año de construcción</p>
+                      <p className="text-sm font-medium text-gray-700">
+                        Año de construcción
+                      </p>
                       <p className="text-gray-900">{normalizedProperty.year}</p>
                     </div>
                   )}
-                  
+
                   <div>
-                    <p className="text-sm font-medium text-gray-700">ID de la Propiedad</p>
-                    <p className="text-gray-900 font-mono text-sm">{normalizedProperty.idProperty}</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      ID de la Propiedad
+                    </p>
+                    <p className="text-gray-900 font-mono text-sm">
+                      {normalizedProperty.idProperty}
+                    </p>
                   </div>
                 </div>
 
                 {/* Property Traces (if available) */}
-                {normalizedProperty.traces && normalizedProperty.traces.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium text-gray-700 mb-3">Historial de Transacciones</p>
-                    <div className="space-y-2">
-                      {normalizedProperty.traces.map((trace) => (
-                        <div key={trace.idPropertyTrace} className="bg-gray-50 p-3 rounded-md">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <p className="font-medium text-gray-900">{trace.name}</p>
-                              <p className="text-sm text-gray-600">{new Date(trace.dateSale).toLocaleDateString()}</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-semibold text-gray-900">{formatPrice(trace.value)}</p>
-                              {trace.tax > 0 && (
-                                <p className="text-sm text-gray-600">Impuesto: {formatPrice(trace.tax)}</p>
-                              )}
+                {normalizedProperty.traces &&
+                  normalizedProperty.traces.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-3">
+                        Historial de Transacciones
+                      </p>
+                      <div className="space-y-2">
+                        {normalizedProperty.traces.map((trace, index) => (
+                          <div
+                            key={`${trace.dateSale}-${trace.value}-${index}`}
+                            className="bg-gray-50 p-3 rounded-md"
+                          >
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="font-medium text-gray-900">
+                                  {trace.name}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {new Date(
+                                    trace.dateSale
+                                  ).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-semibold text-gray-900">
+                                  {formatPrice(trace.value)}
+                                </p>
+                                {trace.tax > 0 && (
+                                  <p className="text-sm text-gray-600">
+                                    Impuesto: {formatPrice(trace.tax)}
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             </div>
 
@@ -274,9 +373,7 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
               <Button variant="outline" onClick={onClose}>
                 Cerrar
               </Button>
-              <Button variant="primary">
-                Contactar
-              </Button>
+              <Button variant="primary">Contactar</Button>
             </div>
           </Card>
         </div>

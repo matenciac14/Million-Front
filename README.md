@@ -1,3 +1,5 @@
+<!-- @format -->
+
 # Million Real Estate - Frontend
 
 Aplicación frontend para la gestión de propiedades inmobiliarias desarrollada con Next.js, conectada a una API .NET con MongoDB.
@@ -5,6 +7,7 @@ Aplicación frontend para la gestión de propiedades inmobiliarias desarrollada 
 ## 🎯 Descripción del Proyecto
 
 Este proyecto forma parte de una aplicación full-stack para una empresa inmobiliaria que requiere:
+
 - **Backend**: API .NET 8/9 con MongoDB
 - **Frontend**: Aplicación web con Next.js y TypeScript
 - **Funcionalidades**: Búsqueda y filtrado de propiedades inmobiliarias
@@ -47,11 +50,13 @@ Este proyecto forma parte de una aplicación full-stack para una empresa inmobil
 ## 🛠 Instalación y Configuración
 
 ### Prerrequisitos
-- Node.js 18+ 
+
+- Node.js 18+
 - Backend API ejecutándose en `http://localhost:5179`
 - npm, yarn, pnpm o bun
 
 ### Instalación
+
 ```bash
 # Instalar dependencias
 npm install
@@ -67,6 +72,7 @@ npm run dev
 La aplicación frontend se conecta a una API .NET que debe estar ejecutándose en `http://localhost:5179` con los siguientes endpoints:
 
 ### Endpoints Principales
+
 ```
 GET /api/properties              # Obtener todas las propiedades
 GET /api/properties?name=...     # Filtrar por nombre
@@ -77,14 +83,15 @@ GET /api/properties/{id}         # Obtener propiedad por ID
 ```
 
 ### Estructura de Datos (DTO)
+
 ```typescript
 interface Property {
   id: string;
-  idOwner: string;    // ID del propietario
-  name: string;       // Nombre de la propiedad
-  address: string;    // Dirección de la propiedad
-  price: number;      // Precio de la propiedad
-  image: string;      // URL de la imagen
+  idOwner: string; // ID del propietario
+  name: string; // Nombre de la propiedad
+  address: string; // Dirección de la propiedad
+  price: number; // Precio de la propiedad
+  image: string; // URL de la imagen
 }
 ```
 
@@ -107,6 +114,7 @@ npm run lint
 ## 📱 Características Implementadas
 
 ### ✅ Funcionalidades Core
+
 - **Lista de Propiedades**: Visualización en grid responsive
 - **Filtros Avanzados**: Por nombre, dirección y rango de precios
 - **Detalles de Propiedad**: Modal con información completa
@@ -114,12 +122,14 @@ npm run lint
 - **Responsive Design**: Adaptable a móviles, tablets y desktop
 
 ### ✅ Filtros Implementados
+
 - 🔍 **Búsqueda por nombre**: Filtrado dinámico con debounce
 - 📍 **Búsqueda por dirección**: Búsqueda en tiempo real
 - 💰 **Filtro por precio**: Rangos predefinidos y personalizados
 - 🗂 **Filtros combinados**: Múltiples filtros simultáneos
 
 ### ✅ UX/UI Features
+
 - 📱 **Responsive**: Diseño optimizado para todos los dispositivos
 - ⚡ **Estados de carga**: Skeletons y spinners
 - ❌ **Manejo de errores**: Error boundaries y mensajes informativos
@@ -128,25 +138,28 @@ npm run lint
 ## 🔧 Componentes Principales
 
 ### PropertyCard
+
 Tarjeta individual que muestra información básica de cada propiedad:
+
 ```tsx
-<PropertyCard 
-  property={property} 
-  onViewDetails={handleViewDetails} 
-/>
+<PropertyCard property={property} onViewDetails={handleViewDetails} />
 ```
 
 ### PropertyFilters
+
 Sistema de filtros avanzado con búsqueda en tiempo real:
+
 ```tsx
-<PropertyFiltersComponent 
+<PropertyFiltersComponent
   onFiltersChange={handleFiltersChange}
   isLoading={isLoading}
 />
 ```
 
 ### PropertyDetailModal
+
 Modal con información detallada de la propiedad:
+
 ```tsx
 <PropertyDetailModal
   property={selectedProperty}
@@ -165,11 +178,12 @@ Modal con información detallada de la propiedad:
 ## ⚙️ Configuración de API
 
 La configuración de la API se encuentra en `lib/api-config.ts`:
+
 ```typescript
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:5179',
+  BASE_URL: "http://localhost:5179",
   ENDPOINTS: {
-    PROPERTIES: '/api/properties',
+    PROPERTIES: "/api/properties",
     PROPERTY_BY_ID: (id: string) => `/api/properties/${id}`,
   },
 };
@@ -178,12 +192,14 @@ export const API_CONFIG = {
 ## 🧪 Testing y Calidad
 
 ### Implementado
+
 - **TypeScript Strict**: Tipado fuerte en todo el proyecto
 - **ESLint**: Configuración estricta para calidad de código
 - **Error Boundaries**: Manejo robusto de errores
 - **Performance**: Debouncing, lazy loading y optimizaciones
 
 ### Recomendado para Implementar
+
 - **Jest + Testing Library**: Tests unitarios para componentes
 - **Cypress**: Tests end-to-end
 - **Storybook**: Documentación visual de componentes
@@ -191,18 +207,21 @@ export const API_CONFIG = {
 ## 🚀 Despliegue
 
 ### Desarrollo
+
 ```bash
 npm run dev
 # Aplicación disponible en http://localhost:3000
 ```
 
 ### Producción
+
 ```bash
 npm run build
 npm run start
 ```
 
 ### Vercel (Recomendado)
+
 ```bash
 npm i -g vercel
 vercel --prod
@@ -211,11 +230,13 @@ vercel --prod
 ## 📋 Requisitos del Proyecto Cumplidos
 
 ### ✅ Backend Integration
+
 - [x] Conexión con API .NET en `localhost:5179`
 - [x] Filtros por nombre, dirección y rango de precios
 - [x] Manejo de DTOs según especificación
 
 ### ✅ Frontend Requirements
+
 - [x] Aplicación Next.js responsive
 - [x] Lista de propiedades desde API
 - [x] Filtros de búsqueda implementados
@@ -223,6 +244,7 @@ vercel --prod
 - [x] Diseño responsive
 
 ### ✅ Best Practices
+
 - [x] Arquitectura limpia y modular
 - [x] Código organizado y mantenible
 - [x] Manejo de errores implementado
@@ -232,12 +254,15 @@ vercel --prod
 ## 🔧 Troubleshooting
 
 ### Error de conexión con API
+
 Si ves errores de conexión, verifica que:
+
 1. El backend esté ejecutándose en `http://localhost:5179`
 2. Los endpoints de la API estén disponibles
 3. No haya problemas de CORS
 
 ### Problemas de desarrollo
+
 ```bash
 # Limpiar caché de Next.js
 rm -rf .next
@@ -253,6 +278,7 @@ netstat -an | grep 3000
 ## 📞 Soporte
 
 Para problemas o preguntas sobre el proyecto:
+
 1. Verificar que el backend esté ejecutándose correctamente
 2. Revisar la consola del navegador para errores específicos
 3. Consultar la documentación de Next.js para temas del framework

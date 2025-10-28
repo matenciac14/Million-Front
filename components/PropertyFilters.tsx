@@ -1,10 +1,12 @@
-'use client';
+/** @format */
 
-import React, { useState, useEffect } from 'react';
-import { PropertyFilters, PriceRange } from '@/types';
-import { Card } from './Card';
-import { Input } from './Input';
-import { Button } from './Button';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { PropertyFilters, PriceRange } from "@/types";
+import { Card } from "./Card";
+import { Input } from "./Input";
+import { Button } from "./Button";
 
 interface PropertyFiltersComponentProps {
   onFiltersChange: (filters: PropertyFilters) => void;
@@ -12,17 +14,16 @@ interface PropertyFiltersComponentProps {
 }
 
 const PRICE_RANGES: PriceRange[] = [
-  { min: 0, max: 100000000, label: 'Hasta $100M' },
-  { min: 100000000, max: 300000000, label: '$100M - $300M' },
-  { min: 300000000, max: 500000000, label: '$300M - $500M' },
-  { min: 500000000, max: 1000000000, label: '$500M - $1B' },
-  { min: 1000000000, max: Infinity, label: 'Más de $1B' },
+  { min: 0, max: 100000000, label: "Hasta $100M" },
+  { min: 100000000, max: 300000000, label: "$100M - $300M" },
+  { min: 300000000, max: 500000000, label: "$300M - $500M" },
+  { min: 500000000, max: 1000000000, label: "$500M - $1B" },
+  { min: 1000000000, max: Infinity, label: "Más de $1B" },
 ];
 
-export const PropertyFiltersComponent: React.FC<PropertyFiltersComponentProps> = ({
-  onFiltersChange,
-  isLoading
-}) => {
+export const PropertyFiltersComponent: React.FC<
+  PropertyFiltersComponentProps
+> = ({ onFiltersChange, isLoading }) => {
   const [filters, setFilters] = useState<PropertyFilters>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -35,73 +36,76 @@ export const PropertyFiltersComponent: React.FC<PropertyFiltersComponentProps> =
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTimeout(() => {
-      setFilters(prev => ({ ...prev, name: value || undefined }));
+      setFilters((prev) => ({ ...prev, name: value || undefined }));
     }, 500);
   };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTimeout(() => {
-      setFilters(prev => ({ ...prev, address: value || undefined }));
+      setFilters((prev) => ({ ...prev, address: value || undefined }));
     }, 500);
   };
 
   const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTimeout(() => {
-      setFilters(prev => ({ ...prev, city: value || undefined }));
+      setFilters((prev) => ({ ...prev, city: value || undefined }));
     }, 500);
   };
 
   const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTimeout(() => {
-      setFilters(prev => ({ ...prev, state: value || undefined }));
+      setFilters((prev) => ({ ...prev, state: value || undefined }));
     }, 500);
   };
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTimeout(() => {
-      setFilters(prev => ({ ...prev, country: value || undefined }));
+      setFilters((prev) => ({ ...prev, country: value || undefined }));
     }, 500);
   };
 
   const handleOwnerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setTimeout(() => {
-      setFilters(prev => ({ ...prev, ownerName: value || undefined }));
+      setFilters((prev) => ({ ...prev, ownerName: value || undefined }));
     }, 500);
   };
 
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    setFilters(prev => ({ 
-      ...prev, 
-      year: isNaN(value) ? undefined : value 
+    setFilters((prev) => ({
+      ...prev,
+      year: isNaN(value) ? undefined : value,
     }));
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const [sortBy, sortDirection] = e.target.value.split('-') as [PropertyFilters['sortBy'], PropertyFilters['sortDirection']];
-    setFilters(prev => ({ 
-      ...prev, 
+    const [sortBy, sortDirection] = e.target.value.split("-") as [
+      PropertyFilters["sortBy"],
+      PropertyFilters["sortDirection"]
+    ];
+    setFilters((prev) => ({
+      ...prev,
       sortBy: sortBy || undefined,
-      sortDirection: sortDirection || undefined
+      sortDirection: sortDirection || undefined,
     }));
   };
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const pageSize = parseInt(e.target.value);
-    setFilters(prev => ({ 
-      ...prev, 
+    setFilters((prev) => ({
+      ...prev,
       pageSize: isNaN(pageSize) ? undefined : pageSize,
-      page: 1 // Reset page when changing page size
+      page: 1, // Reset page when changing page size
     }));
   };
 
   const handlePriceRangeChange = (range: PriceRange) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       minPrice: range.min === 0 ? undefined : range.min,
       maxPrice: range.max === Infinity ? undefined : range.max,
@@ -121,24 +125,33 @@ export const PropertyFiltersComponent: React.FC<PropertyFiltersComponentProps> =
           className="w-full flex items-center justify-between p-3 bg-white border border-gray-300 rounded-md text-left"
         >
           <span className="font-medium text-gray-900">Filtros de Búsqueda</span>
-          <svg 
-            className={`w-5 h-5 transition-transform ${isCollapsed ? 'rotate-180' : ''}`}
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className={`w-5 h-5 transition-transform ${
+              isCollapsed ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
       </div>
 
       {/* Filters Content */}
-      <div className={`lg:block ${isCollapsed ? 'hidden' : 'block'}`}>
+      <div className={`lg:block ${isCollapsed ? "hidden" : "block"}`}>
         <Card title="Filtros de Búsqueda" className="lg:block hidden">
           <div className="space-y-4">
             {/* Text Filters */}
             <div className="space-y-3">
-              <h4 className="text-sm font-medium text-gray-700 border-b pb-1">Búsqueda por Texto</h4>
+              <h4 className="text-sm font-medium text-gray-700 border-b pb-1">
+                Búsqueda por Texto
+              </h4>
               <Input
                 label="Buscar por nombre"
                 placeholder="Nombre de la propiedad..."
@@ -163,7 +176,9 @@ export const PropertyFiltersComponent: React.FC<PropertyFiltersComponentProps> =
 
             {/* Location Filters */}
             <div className="space-y-3">
-              <h4 className="text-sm font-medium text-gray-700 border-b pb-1">Ubicación</h4>
+              <h4 className="text-sm font-medium text-gray-700 border-b pb-1">
+                Ubicación
+              </h4>
               <Input
                 label="Ciudad"
                 placeholder="Ciudad..."
@@ -188,7 +203,9 @@ export const PropertyFiltersComponent: React.FC<PropertyFiltersComponentProps> =
 
             {/* Numeric Filters */}
             <div className="space-y-3">
-              <h4 className="text-sm font-medium text-gray-700 border-b pb-1">Filtros Numéricos</h4>
+              <h4 className="text-sm font-medium text-gray-700 border-b pb-1">
+                Filtros Numéricos
+              </h4>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Año de Construcción
@@ -226,7 +243,9 @@ export const PropertyFiltersComponent: React.FC<PropertyFiltersComponentProps> =
 
             {/* Sorting and Pagination */}
             <div className="space-y-3">
-              <h4 className="text-sm font-medium text-gray-700 border-b pb-1">Ordenamiento</h4>
+              <h4 className="text-sm font-medium text-gray-700 border-b pb-1">
+                Ordenamiento
+              </h4>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Ordenar por
@@ -307,7 +326,7 @@ export const PropertyFiltersComponent: React.FC<PropertyFiltersComponentProps> =
                 onChange={handleCityChange}
                 disabled={isLoading}
               />
-              
+
               <Input
                 label="Estado"
                 placeholder="Estado..."

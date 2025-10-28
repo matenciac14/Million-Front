@@ -1,13 +1,20 @@
-'use client';
+/** @format */
+
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Property, PropertyFilters, LoadingState, PaginatedResponse } from "@/types";
+import {
+  Property,
+  PropertyFilters,
+  LoadingState,
+  PaginatedResponse,
+} from "@/types";
 import { PropertyService } from "@/lib/property-service";
-import { 
-  PropertyList, 
-  PropertyFiltersComponent, 
+import {
+  PropertyList,
+  PropertyFiltersComponent,
   PropertyDetailModal,
-  ApiDiagnostic
+  ApiDiagnostic,
 } from "@/components";
 
 export default function Home() {
@@ -18,23 +25,25 @@ export default function Home() {
     pageSize: 10,
     totalPages: 0,
     hasNextPage: false,
-    hasPreviousPage: false
+    hasPreviousPage: false,
   });
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
+    null
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDiagnostic, setShowDiagnostic] = useState(false);
   const [loadingState, setLoadingState] = useState<LoadingState>({
     isLoading: false,
-    error: null
+    error: null,
   });
 
   // Función para cargar propiedades
   const loadProperties = useCallback(async (filters: PropertyFilters = {}) => {
     setLoadingState({ isLoading: true, error: null });
-    
+
     try {
       const response = await PropertyService.getProperties(filters);
-      
+
       // Actualizar properties y paginación
       setProperties(response.properties || []);
       setPaginationInfo({
@@ -43,15 +52,15 @@ export default function Home() {
         pageSize: response.pageSize,
         totalPages: response.totalPages,
         hasNextPage: response.hasNextPage,
-        hasPreviousPage: response.hasPreviousPage
+        hasPreviousPage: response.hasPreviousPage,
       });
-      
+
       setLoadingState({ isLoading: false, error: null });
     } catch (error) {
-      console.error('Error loading properties:', error);
-      setLoadingState({ 
-        isLoading: false, 
-        error: error instanceof Error ? error.message : 'Error desconocido' 
+      console.error("Error loading properties:", error);
+      setLoadingState({
+        isLoading: false,
+        error: error instanceof Error ? error.message : "Error desconocido",
       });
     }
   }, []);
@@ -65,9 +74,12 @@ export default function Home() {
   }, []);
 
   // Manejar cambios en filtros
-  const handleFiltersChange = useCallback((filters: PropertyFilters) => {
-    loadProperties(filters);
-  }, [loadProperties]);
+  const handleFiltersChange = useCallback(
+    (filters: PropertyFilters) => {
+      loadProperties(filters);
+    },
+    [loadProperties]
+  );
 
   // Manejar ver detalles de propiedad
   const handleViewDetails = useCallback((property: Property) => {
@@ -102,7 +114,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar - Filtros */}
           <div className="lg:col-span-1">
-            <PropertyFiltersComponent 
+            <PropertyFiltersComponent
               onFiltersChange={handleFiltersChange}
               isLoading={loadingState.isLoading}
             />
@@ -118,11 +130,15 @@ export default function Home() {
               {!loadingState.isLoading && !loadingState.error && (
                 <div className="text-sm text-gray-500">
                   <span>
-                    {paginationInfo.totalCount} {paginationInfo.totalCount === 1 ? 'propiedad encontrada' : 'propiedades encontradas'}
+                    {paginationInfo.totalCount}{" "}
+                    {paginationInfo.totalCount === 1
+                      ? "propiedad encontrada"
+                      : "propiedades encontradas"}
                   </span>
                   {paginationInfo.totalPages > 1 && (
                     <span className="ml-2">
-                      (Página {paginationInfo.page} de {paginationInfo.totalPages})
+                      (Página {paginationInfo.page} de{" "}
+                      {paginationInfo.totalPages})
                     </span>
                   )}
                 </div>
@@ -134,8 +150,16 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="bg-red-50 border border-red-200 rounded-md p-4">
                   <div className="flex">
-                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    <svg
+                      className="h-5 w-5 text-red-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <div className="ml-3 flex-1">
                       <h3 className="text-sm font-medium text-red-800">
@@ -145,7 +169,8 @@ export default function Home() {
                         {loadingState.error}
                       </p>
                       <p className="mt-2 text-sm text-red-600">
-                        Asegúrate de que el servidor backend esté ejecutándose en http://localhost:5179
+                        Asegúrate de que el servidor backend esté ejecutándose
+                        en http://localhost:5179
                       </p>
                       <div className="mt-3 flex space-x-2">
                         <button
@@ -158,13 +183,13 @@ export default function Home() {
                           onClick={() => setShowDiagnostic(!showDiagnostic)}
                           className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded hover:bg-blue-200"
                         >
-                          {showDiagnostic ? 'Ocultar' : 'Mostrar'} Diagnóstico
+                          {showDiagnostic ? "Ocultar" : "Mostrar"} Diagnóstico
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
-                
+
                 {/* API Diagnostic Tool */}
                 {showDiagnostic && <ApiDiagnostic />}
               </div>

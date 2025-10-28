@@ -16,12 +16,16 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'http',
+        protocol: 'https',
         hostname: 'localhost',
-        port: '5179',
+        port: '7007',
         pathname: '/**',
       },
     ],
+  },
+  // Variables de entorno para desarrollo con SSL
+  env: {
+    NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_ENV === 'development' ? '0' : '1',
   },
 };
 

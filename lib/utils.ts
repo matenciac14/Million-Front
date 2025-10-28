@@ -60,47 +60,47 @@ export const truncateText = (text: string, maxLength: number): string => {
   return text.substring(0, maxLength).trim() + '...';
 };
 
-// ===== NUEVAS FUNCIONES PARA MANEJO DE IMÁGENES =====
+// ===== FUNCIONES PARA MANEJO DE PROPIEDADES E IMÁGENES =====
 
-// Obtener imagen principal de una propiedad
+/**
+ * Obtiene la imagen principal de una propiedad
+ */
 export const getMainImage = (property: Property): string => {
-  // Si tiene imágenes en la nueva estructura
-  if (property.images && property.images.length > 0) {
-    // Buscar imagen marcada como principal
-    const mainImage = property.images.find(img => img.enabled && img.isMain);
-    if (mainImage && isValidImageUrl(mainImage.file)) {
-      return mainImage.file;
-    }
-    
-    // Si no hay imagen principal, usar la primera habilitada
-    const firstEnabled = property.images.find(img => img.enabled);
-    if (firstEnabled && isValidImageUrl(firstEnabled.file)) {
-      return firstEnabled.file;
-    }
+  if (!property.images || property.images.length === 0) {
+    return '/images/placeholder-property.jpg';
   }
   
-  // Fallback al placeholder
-  return '/placeholder-property.svg';
+  // Buscar imagen marcada como principal
+  const mainImage = property.images.find(img => img.isMain && img.enabled);
+  if (mainImage) {
+    return mainImage.file;
+  }
+  
+  // Si no hay imagen principal marcada, usar la primera habilitada
+  // (común en el backend real donde todas están marcadas como isMain: false)
+  const firstEnabled = property.images.find(img => img.enabled);
+  return firstEnabled?.file || '/images/placeholder-property.jpg';
 };
 
-// Obtener todas las imágenes válidas de una propiedad
+/**
+ * Obtiene todas las imágenes habilitadas de una propiedad
+ */
 export const getPropertyImages = (property: Property): PropertyImage[] => {
   if (!property.images) return [];
   
   return property.images
     .filter(img => img.enabled && isValidImageUrl(img.file))
     .sort((a, b) => {
-      // Ordenar: imagen principal primero, luego por fecha de creación
+      // Ordenar: imagen principal primero
       if (a.isMain && !b.isMain) return -1;
       if (!a.isMain && b.isMain) return 1;
-      if (a.createdAt && b.createdAt) {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
       return 0;
     });
 };
 
-// Obtener URL de imagen con fallback
+/**
+ * Obtener URL de imagen con fallback
+ */
 export const getImageUrl = (imageFile: string | null | undefined): string => {
   if (imageFile && isValidImageUrl(imageFile)) {
     return imageFile;
@@ -108,12 +108,25 @@ export const getImageUrl = (imageFile: string | null | undefined): string => {
   return '/placeholder-property.svg';
 };
 
-// Normalizar propiedad para compatibilidad con componentes existentes
+/**
+ * Normaliza una propiedad para asegurar compatibilidad con componentes
+ */
 export const normalizeProperty = (property: Property): Property => {
   return {
     ...property,
-    id: property.idProperty, // Alias para compatibilidad
-    ownerName: property.owner?.name || property.ownerName,
-    ownerPhone: property.owner?.phone || property.ownerPhone,
+    // Asegurar que existe los campos necesarios
+    images: property.images || [],
+    owner: property.owner || {
+      name: 'Propietario no especificado',
+      photo: '',
+      phone: '',
+      email: ''
+    },
+    traces: property.traces || [],
+    // Campos de compatibilidad (aliases)
+    idProperty: property.id,
+    codeInternal: property.codigoInternal,
+    ownerName: property.owner?.name,
+    ownerPhone: property.owner?.phone
   };
 };

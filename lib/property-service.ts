@@ -15,7 +15,7 @@ export class PropertyService {
       }
 
       const queryParams = new URLSearchParams();
-      
+
       // Agregar filtros a los query parameters
       if (filters.name && filters.name.trim()) {
         queryParams.append('name', filters.name.trim());
@@ -44,7 +44,7 @@ export class PropertyService {
       if (filters.ownerName && filters.ownerName.trim()) {
         queryParams.append('ownerName', filters.ownerName.trim());
       }
-      
+
       // Paginación y ordenamiento
       if (filters.page && filters.page > 0) {
         queryParams.append('page', filters.page.toString());
@@ -61,24 +61,28 @@ export class PropertyService {
 
       const queryString = queryParams.toString();
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PROPERTIES}${queryString ? `?${queryString}` : ''}`;
-      
+
       console.log('Fetching properties from:', url);
-      
+
       const response = await fetch(url, {
         method: 'GET',
         headers: API_CONFIG.HEADERS,
       });
 
       const data = await handleApiResponse<PaginatedResponse<Property> | Property[]>(response);
-      
+
       console.log('API Response received:', data);
-      
+
       // Manejar diferentes formatos de respuesta del backend
       if (Array.isArray(data)) {
         // Si la respuesta es directamente un array de propiedades (sin filtros)
         console.log('Processing array response with', data.length, 'properties');
         data.forEach((prop, index) => {
-          console.log(`Property ${index + 1} image:`, prop.image);
+          if (prop.images && prop.images.length > 0) {
+            console.log(`Property ${index + 1} images:`, prop.images.map(img => img.file));
+          } else {
+            console.log(`Property ${index + 1} has no images`);
+          }
         });
         return {
           properties: data as Property[],
@@ -108,7 +112,7 @@ export class PropertyService {
       }
     } catch (error) {
       console.error('Error fetching properties:', error);
-      
+
       // Proporcionar datos de prueba en caso de error para desarrollo
       if (process.env.NODE_ENV === 'development') {
         console.warn('Using mock data for development');
@@ -123,7 +127,7 @@ export class PropertyService {
           hasPreviousPage: false
         };
       }
-      
+
       throw error;
     }
   }
@@ -134,16 +138,16 @@ export class PropertyService {
   static async getPropertyById(id: string): Promise<ApiResponse<Property>> {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PROPERTY_BY_ID(id)}`;
-      
+
       console.log('Fetching property by ID from:', url);
-      
+
       const response = await fetch(url, {
         method: 'GET',
         headers: API_CONFIG.HEADERS,
       });
 
       const data = await handleApiResponse<unknown>(response);
-      
+
       // Adaptar la respuesta según el formato
       if (this.isProperty(data)) {
         return {
@@ -168,9 +172,9 @@ export class PropertyService {
   static async createProperty(propertyData: PropertyCreateDto): Promise<ApiResponse<Property>> {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PROPERTIES}`;
-      
+
       console.log('Creating property at:', url);
-      
+
       const response = await fetch(url, {
         method: 'POST',
         headers: API_CONFIG.HEADERS,
@@ -178,7 +182,7 @@ export class PropertyService {
       });
 
       const data = await handleApiResponse<Property>(response);
-      
+
       return {
         data: data as Property,
         success: true,
@@ -196,9 +200,9 @@ export class PropertyService {
   static async updateProperty(id: string, propertyData: PropertyUpdateDto): Promise<ApiResponse<Property>> {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PROPERTY_BY_ID(id)}`;
-      
+
       console.log('Updating property at:', url);
-      
+
       const response = await fetch(url, {
         method: 'PUT',
         headers: API_CONFIG.HEADERS,
@@ -206,7 +210,7 @@ export class PropertyService {
       });
 
       const data = await handleApiResponse<Property>(response);
-      
+
       return {
         data: data as Property,
         success: true,
@@ -224,16 +228,16 @@ export class PropertyService {
   static async deleteProperty(id: string): Promise<ApiResponse<boolean>> {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PROPERTY_BY_ID(id)}`;
-      
+
       console.log('Deleting property at:', url);
-      
+
       const response = await fetch(url, {
         method: 'DELETE',
         headers: API_CONFIG.HEADERS,
       });
 
       await handleApiResponse<unknown>(response);
-      
+
       return {
         data: true,
         success: true,
@@ -251,16 +255,16 @@ export class PropertyService {
   static async getPropertiesByOwner(ownerId: string): Promise<PaginatedResponse<Property>> {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PROPERTIES_BY_OWNER(ownerId)}`;
-      
+
       console.log('Fetching properties by owner from:', url);
-      
+
       const response = await fetch(url, {
         method: 'GET',
         headers: API_CONFIG.HEADERS,
       });
 
       const data = await handleApiResponse<PaginatedResponse<Property> | Property[]>(response);
-      
+
       if (Array.isArray(data)) {
         return {
           properties: data as Property[],
@@ -281,211 +285,160 @@ export class PropertyService {
   }
 
   /**
-   * Datos de prueba para desarrollo
+   * Datos de prueba para desarrollo (estructura exacta del backend real)
    */
   private static getMockProperties(): Property[] {
     return [
       {
-        idProperty: '1',
-        name: 'Casa Moderna en Zona Norte',
-        address: 'Calle 123 #45-67, Bogotá',
-        price: 450000000,
-        codeInternal: 'PROP001',
-        year: 2020,
-        idOwner: 'owner-001',
-        createdAt: new Date().toISOString(),
-        // Múltiples imágenes como en la estructura real
-        images: [
-          {
-            idPropertyImage: 'img1',
-            idProperty: '1',
-            file: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500',
-            enabled: true,
-            isMain: true,
-            description: 'Vista frontal de la casa',
-            createdAt: new Date().toISOString()
-          },
-          {
-            idPropertyImage: 'img2',
-            idProperty: '1',
-            file: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500',
-            enabled: true,
-            isMain: false,
-            description: 'Vista del jardín',
-            createdAt: new Date().toISOString()
-          },
-          {
-            idPropertyImage: 'img3',
-            idProperty: '1',
-            file: 'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=500',
-            enabled: true,
-            isMain: false,
-            description: 'Interior sala principal',
-            createdAt: new Date().toISOString()
-          }
-        ],
-        // Información del propietario
-        owner: {
-          idOwner: 'owner-001',
-          name: 'Juan Carlos',
-          address: 'Calle 456 #78-90, Bogotá',
-          phone: '+57 300 123 4567',
-          email: 'juan.carlos@email.com'
-        },
-        // Historial de transacciones
-        traces: [
-          {
-            idPropertyTrace: 'trace1',
-            idProperty: '1',
-            dateSale: '2020-05-15',
-            name: 'Compra inicial',
-            value: 420000000,
-            tax: 42000000,
-            createdAt: new Date().toISOString()
-          }
-        ],
-        // Campos calculados para compatibilidad
-        id: '1',
-        ownerName: 'Juan Carlos',
-        ownerPhone: '+57 300 123 4567',
-        city: 'Bogotá',
-        state: 'Cundinamarca',
-        country: 'Colombia'
-      },
-      {
-        idProperty: '2',
-        name: 'Apartamento Ejecutivo Centro',
-        address: 'Carrera 7 #15-20, Bogotá',
+        id: "69000ba3ea2a25a07b083ad2",
+        name: "Casa Colonial Histórica",
+        address: "Calle 10 #3-45, La Candelaria",
         price: 280000000,
-        codeInternal: 'PROP002',
-        year: 2018,
-        idOwner: 'owner-002',
-        createdAt: new Date().toISOString(),
         images: [
           {
-            idPropertyImage: 'img4',
-            idProperty: '2',
-            file: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500',
+            idPropertyImage: "69000c2aea2a25a07b083adc",
+            file: "https://res.cloudinary.com/miguedev/image/upload/v1761610794/real-estate/properties/cocina-casa1_sn6zdd.jpg",
             enabled: true,
-            isMain: true,
-            description: 'Vista del apartamento',
-            createdAt: new Date().toISOString()
+            isMain: false, // Backend real marca todas como false
+            description: ""
           },
           {
-            idPropertyImage: 'img5',
-            idProperty: '2',
-            file: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500',
+            idPropertyImage: "69000c32ea2a25a07b083add",
+            file: "https://res.cloudinary.com/miguedev/image/upload/v1761610801/real-estate/properties/habitacion-casa1_gohzzg.jpg",
             enabled: true,
             isMain: false,
-            description: 'Cocina moderna',
-            createdAt: new Date().toISOString()
+            description: ""
           }
         ],
         owner: {
-          idOwner: 'owner-002',
-          name: 'María García',
-          address: 'Carrera 15 #80-25, Bogotá',
-          phone: '+57 311 234 5678',
-          email: 'maria.garcia@email.com'
+          name: "María Isabel González Herrera",
+          photo: "",
+          phone: "+57 315 777 8899",
+          email: "maria.gonzalez@email.com"
         },
         traces: [
           {
-            idPropertyTrace: 'trace2',
-            idProperty: '2',
-            dateSale: '2018-03-20',
-            name: 'Compra inicial',
-            value: 250000000,
-            tax: 25000000,
-            createdAt: new Date().toISOString()
+            dateSale: "2023-07-30",
+            name: "Restauración y valorización",
+            value: 280000000,
+            tax: 28000000
           },
           {
-            idPropertyTrace: 'trace3',
-            idProperty: '2',
-            dateSale: '2024-01-10',
-            name: 'Revalorización',
-            value: 280000000,
-            tax: 0,
-            createdAt: new Date().toISOString()
+            dateSale: "2019-11-25",
+            name: "Compra casa histórica",
+            value: 250000000,
+            tax: 25000000
           }
         ],
-        id: '2',
-        ownerName: 'María García',
-        ownerPhone: '+57 311 234 5678',
-        city: 'Bogotá',
-        state: 'Cundinamarca',
-        country: 'Colombia'
+        codigoInternal: "CH005",
+        year: 1920,
+        createdAt: "2025-10-28T00:17:39.356Z",
+        city: "",
+        state: "",
+        country: ""
       },
       {
-        idProperty: '3',
-        name: 'Penthouse con Vista',
-        address: 'Avenida 19 #100-50, Bogotá',
-        price: 750000000,
-        codeInternal: 'PROP003',
-        year: 2022,
-        idOwner: 'owner-003',
-        createdAt: new Date().toISOString(),
+        id: "69000b9cea2a25a07b083ad1",
+        name: "Penthouse Vista Panorámica",
+        address: "Carrera 11 #93-07, Chapinero Alto",
+        price: 890000000,
         images: [
           {
-            idPropertyImage: 'img6',
-            idProperty: '3',
-            file: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500',
-            enabled: true,
-            isMain: true,
-            description: 'Vista panorámica',
-            createdAt: new Date().toISOString()
-          },
-          {
-            idPropertyImage: 'img7',
-            idProperty: '3',
-            file: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500',
+            idPropertyImage: "69000c13ea2a25a07b083ada",
+            file: "https://res.cloudinary.com/miguedev/image/upload/v1761610770/real-estate/properties/estudio-casa2_o2reea.jpg",
             enabled: true,
             isMain: false,
-            description: 'Terraza con vista',
-            createdAt: new Date().toISOString()
+            description: ""
           },
           {
-            idPropertyImage: 'img8',
-            idProperty: '3',
-            file: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500',
+            idPropertyImage: "69000c20ea2a25a07b083adb",
+            file: "https://res.cloudinary.com/miguedev/image/upload/v1761610783/real-estate/properties/test-house_ckkcce.jpg",
             enabled: true,
             isMain: false,
-            description: 'Sala de estar',
-            createdAt: new Date().toISOString()
-          },
-          {
-            idPropertyImage: 'img9',
-            idProperty: '3',
-            file: 'https://images.unsplash.com/photo-1560185007-5f0bb1866cab?w=500',
-            enabled: true,
-            isMain: false,
-            description: 'Dormitorio principal',
-            createdAt: new Date().toISOString()
+            description: ""
           }
         ],
         owner: {
-          idOwner: 'owner-003',
-          name: 'Carlos Rodríguez',
-          address: 'Avenida 19 #95-30, Bogotá',
-          phone: '+57 320 345 6789',
-          email: 'carlos.rodriguez@email.com'
+          name: "Carlos Eduardo Martínez Rodríguez",
+          photo: "",
+          phone: "+57 300 555 1234",
+          email: "carlos.martinez@email.com"
         },
         traces: [
           {
-            idPropertyTrace: 'trace4',
-            idProperty: '3',
-            dateSale: '2022-08-15',
-            name: 'Compra inicial',
-            value: 720000000,
-            tax: 72000000,
-            createdAt: new Date().toISOString()
+            dateSale: "2024-10-01",
+            name: "Avalúo actualizado mercado",
+            value: 890000000,
+            tax: 89000000
+          },
+          {
+            dateSale: "2023-04-18",
+            name: "Adquisición penthouse premium",
+            value: 850000000,
+            tax: 85000000
           }
         ],
-        id: '3',
-        ownerName: 'Carlos Rodríguez',
-        ownerPhone: '+57 320 345 6789',
-        city: 'Bogotá',
-        state: 'Cundinamarca',
-        country: 'Colombia'
+        codigoInternal: "PH004",
+        year: 2023,
+        createdAt: "2025-10-28T00:17:32.941Z",
+        city: "",
+        state: "",
+        country: ""
+      },
+      {
+        id: "69000b88ea2a25a07b083ace",
+        name: "Casa Moderna Zona Norte",
+        address: "Carrera 15 #85-42, Zona Norte",
+        price: 450000000,
+        images: [
+          {
+            idPropertyImage: "69000bbeea2a25a07b083ad3",
+            file: "https://res.cloudinary.com/miguedev/image/upload/v1761610685/real-estate/properties/fachada-casa1_yxbrgo.jpg",
+            enabled: true,
+            isMain: false,
+            description: ""
+          },
+          {
+            idPropertyImage: "69000bccea2a25a07b083ad4",
+            file: "https://res.cloudinary.com/miguedev/image/upload/v1761610700/real-estate/properties/interior-casa1_kgm3kr.jpg",
+            enabled: true,
+            isMain: false,
+            description: ""
+          },
+          {
+            idPropertyImage: "69000bd3ea2a25a07b083ad5",
+            file: "https://res.cloudinary.com/miguedev/image/upload/v1761610706/real-estate/properties/jardin-casa1_oh8gcn.jpg",
+            enabled: true,
+            isMain: false,
+            description: ""
+          }
+        ],
+        owner: {
+          name: "Carlos Eduardo Martínez Rodríguez",
+          photo: "",
+          phone: "+57 300 555 1234",
+          email: "carlos.martinez@email.com"
+        },
+        traces: [
+          {
+            dateSale: "2024-02-10",
+            name: "Valorización actualizada",
+            value: 450000000,
+            tax: 45000000
+          },
+          {
+            dateSale: "2021-03-15",
+            name: "Compra inicial",
+            value: 400000000,
+            tax: 40000000
+          }
+        ],
+        codigoInternal: "ZN001",
+        year: 2021,
+        createdAt: "2025-10-28T00:17:12.062Z",
+        city: "",
+        state: "",
+        country: ""
       }
     ];
   }
@@ -494,9 +447,9 @@ export class PropertyService {
    * Type guards para verificar tipos
    */
   private static isProperty(obj: unknown): obj is Property {
-    return typeof obj === 'object' && obj !== null && 
-           ('idProperty' in obj || 'id' in obj) && 
-           'name' in obj && 'address' in obj && 'price' in obj;
+    return typeof obj === 'object' && obj !== null &&
+      ('idProperty' in obj || 'id' in obj) &&
+      'name' in obj && 'address' in obj && 'price' in obj;
   }
 
   private static isApiResponse(obj: unknown): obj is ApiResponse<unknown> {

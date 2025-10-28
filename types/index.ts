@@ -1,72 +1,52 @@
 // Tipos TypeScript para el proyecto inmobiliario (según schema de DB)
 
-// Entidad PropertyImage (tabla separada para imágenes)
+// Entidad PropertyImage (según respuesta real del backend)
 export interface PropertyImage {
   idPropertyImage: string;
-  idProperty: string;
   file: string;
   enabled: boolean;
-  isMain?: boolean; // Para identificar imagen principal
-  description?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  isMain: boolean;
+  description: string;
 }
 
-// Entidad PropertyTrace (trazabilidad/historial de ventas)
+// Entidad PropertyTrace (según respuesta real del backend)
 export interface PropertyTrace {
-  idPropertyTrace: string;
-  idProperty: string;
   dateSale: string;
   name: string;
   value: number;
   tax: number;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
-// Entidad Owner según schema de DB
+// Entidad Owner según respuesta real del backend
 export interface Owner {
-  idOwner: string;
   name: string;
-  address: string;
-  photo?: string;
-  birthday?: string;
-  // Campos adicionales del backend si existen
-  lastName?: string;
-  fullName?: string;
-  phone?: string;
-  email?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  photo: string;
+  phone: string;
+  email: string;
 }
 
-// Interfaz principal para las propiedades (según schema real de DB)
+// Interfaz principal para las propiedades (según respuesta real del backend)
 export interface Property {
-  idProperty: string;
+  id: string;
   name: string;
   address: string;
   price: number;
-  codeInternal: string;
-  year?: number;
-  idOwner: string;
-  createdAt?: string;
-  updatedAt?: string;
-  
-  // Relaciones pobladas desde otras tablas
-  images?: PropertyImage[];
-  traces?: PropertyTrace[];
-  owner?: Owner;
+  images: PropertyImage[];
+  owner: Owner;
+  traces: PropertyTrace[];
+  codigoInternal: string;
+  year: number;
+  createdAt: string;
+  city: string;
+  state: string;
+  country: string;
   
   // Campos calculados para compatibilidad con el frontend existente
-  id?: string; // Alias para idProperty
+  idProperty?: string; // Alias para id
   ownerName?: string;
   ownerPhone?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-}
-
-// DTO para crear/actualizar propiedades (según backend)
+  codeInternal?: string; // Alias para codigoInternal
+}// DTO para crear/actualizar propiedades (según backend)
 export interface PropertyCreateDto {
   name: string;
   address: string;
@@ -114,20 +94,20 @@ export interface PropertyFilters {
   // Filtros de texto
   name?: string;
   address?: string;
-  
+
   // Filtros numéricos
   minPrice?: number;
   maxPrice?: number;
   year?: number;
-  
+
   // Filtros de ubicación
   city?: string;
   state?: string;
   country?: string;
-  
+
   // Filtros de relaciones
   ownerName?: string;
-  
+
   // Paginación y ordenamiento
   page?: number;
   pageSize?: number;
