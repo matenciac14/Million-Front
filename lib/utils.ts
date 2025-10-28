@@ -69,13 +69,13 @@ export const getMainImage = (property: Property): string => {
   if (!property.images || property.images.length === 0) {
     return '/images/placeholder-property.jpg';
   }
-  
+
   // Buscar imagen marcada como principal
   const mainImage = property.images.find(img => img.isMain && img.enabled);
   if (mainImage) {
     return mainImage.file;
   }
-  
+
   // Si no hay imagen principal marcada, usar la primera habilitada
   // (común en el backend real donde todas están marcadas como isMain: false)
   const firstEnabled = property.images.find(img => img.enabled);
@@ -87,7 +87,7 @@ export const getMainImage = (property: Property): string => {
  */
 export const getPropertyImages = (property: Property): PropertyImage[] => {
   if (!property.images) return [];
-  
+
   return property.images
     .filter(img => img.enabled && isValidImageUrl(img.file))
     .sort((a, b) => {

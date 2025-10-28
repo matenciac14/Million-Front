@@ -1,16 +1,16 @@
 // Jest setup file para configuraciones globales de testing
 
-import '@testing-library/jest-dom'
-import React from 'react'
+import '@testing-library/jest-dom';
+import React from 'react';
 
 // Mock para Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return React.createElement('img', { ...props, alt: props.alt })
+
+    return React.createElement('img', { ...props, alt: props.alt });
   },
-}))
+}));
 
 // Mock para Next.js router
 jest.mock('next/navigation', () => ({
@@ -22,15 +22,15 @@ jest.mock('next/navigation', () => ({
       forward: jest.fn(),
       refresh: jest.fn(),
       prefetch: jest.fn(),
-    }
+    };
   },
   useSearchParams() {
-    return new URLSearchParams()
+    return new URLSearchParams();
   },
   usePathname() {
-    return ''
+    return '';
   },
-}))
+}));
 
 // Mock para window.matchMedia (usado por componentes responsive)
 Object.defineProperty(window, 'matchMedia', {
@@ -45,14 +45,14 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-})
+});
 
 // Mock para fetch API (usado por PropertyService)
-global.fetch = jest.fn()
+global.fetch = jest.fn();
 
 // Mock para console methods en tests (opcional, para tests más limpios)
-const originalError = console.error
-const originalWarn = console.warn
+const originalError = console.error;
+const originalWarn = console.warn;
 
 beforeAll(() => {
   console.error = (...args: unknown[]) => {
@@ -60,28 +60,28 @@ beforeAll(() => {
       typeof args[0] === 'string' &&
       args[0].includes('Warning: ReactDOM.render is deprecated')
     ) {
-      return
+      return;
     }
-    originalError.call(console, ...args)
-  }
-  
+    originalError.call(console, ...args);
+  };
+
   console.warn = (...args: unknown[]) => {
     if (
       typeof args[0] === 'string' &&
       args[0].includes('componentWillReceiveProps')
     ) {
-      return
+      return;
     }
-    originalWarn.call(console, ...args)
-  }
-})
+    originalWarn.call(console, ...args);
+  };
+});
 
 afterAll(() => {
-  console.error = originalError
-  console.warn = originalWarn
-})
+  console.error = originalError;
+  console.warn = originalWarn;
+});
 
 // Cleanup después de cada test
 afterEach(() => {
-  jest.clearAllMocks()
-})
+  jest.clearAllMocks();
+});

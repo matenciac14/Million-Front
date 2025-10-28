@@ -40,7 +40,7 @@ export interface Property {
   city: string;
   state: string;
   country: string;
-  
+
   // Campos calculados para compatibilidad con el frontend existente
   idProperty?: string; // Alias para id
   ownerName?: string;
