@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { PropertyFilters, PriceRange } from "@/types";
 import { Card } from "./Card";
 import { Input } from "./Input";
@@ -26,53 +26,67 @@ export const PropertyFiltersComponent: React.FC<
 > = ({ onFiltersChange, isLoading }) => {
   const [filters, setFilters] = useState<PropertyFilters>({});
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  // Timeout ref para el debounce manual
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Effect to trigger API call when filters change
+  // Función para manejar el debounce de filtros
+  const triggerFiltersChange = useCallback((newFilters: PropertyFilters) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    timeoutRef.current = setTimeout(() => {
+      onFiltersChange(newFilters);
+    }, 500);
+  }, [onFiltersChange]);
+
+  // Effect para llamar la API cuando los filtros cambien
   useEffect(() => {
-    onFiltersChange(filters);
-  }, [filters, onFiltersChange]);
+    triggerFiltersChange(filters);
+    
+    // Cleanup
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [filters, triggerFiltersChange]);
 
-  // Simple debounced input handlers
+  // Función helper para actualizar filtros sin causar re-renders innecesarios
+  const updateFilters = useCallback((updates: Partial<PropertyFilters>) => {
+    setFilters(prev => ({ ...prev, ...updates }));
+  }, []);
+
+  // Handlers para inputs de texto - ahora más simples
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setTimeout(() => {
-      setFilters((prev) => ({ ...prev, name: value || undefined }));
-    }, 500);
+    updateFilters({ name: value || undefined });
   };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setTimeout(() => {
-      setFilters((prev) => ({ ...prev, address: value || undefined }));
-    }, 500);
+    updateFilters({ address: value || undefined });
   };
 
   const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setTimeout(() => {
-      setFilters((prev) => ({ ...prev, city: value || undefined }));
-    }, 500);
+    updateFilters({ city: value || undefined });
   };
 
   const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setTimeout(() => {
-      setFilters((prev) => ({ ...prev, state: value || undefined }));
-    }, 500);
+    updateFilters({ state: value || undefined });
   };
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setTimeout(() => {
-      setFilters((prev) => ({ ...prev, country: value || undefined }));
-    }, 500);
+    updateFilters({ country: value || undefined });
   };
 
   const handleOwnerNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setTimeout(() => {
-      setFilters((prev) => ({ ...prev, ownerName: value || undefined }));
-    }, 500);
+    updateFilters({ ownerName: value || undefined });
   };
 
   const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -285,7 +299,7 @@ export const PropertyFiltersComponent: React.FC<
             </div>
 
             <Button
-              variant="outline"
+              variant="warning"
               onClick={clearFilters}
               className="w-full"
               disabled={isLoading}
@@ -405,7 +419,7 @@ export const PropertyFiltersComponent: React.FC<
           </div>
 
           <Button
-            variant="outline"
+            variant="warning"
             onClick={clearFilters}
             className="w-full"
             disabled={isLoading}

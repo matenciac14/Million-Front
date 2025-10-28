@@ -25,7 +25,6 @@ const nextConfig: NextConfig = {
   },
   // Variables de entorno para desarrollo con SSL
   env: {
-    NODE_TLS_REJECT_UNAUTHORIZED: process.env.NODE_ENV === 'development' ? '0' : '1',
   },
 };
 
